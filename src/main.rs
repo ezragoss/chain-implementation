@@ -8,23 +8,30 @@ use std::string::String;
 /* Block 
  *
  */
-struct Block<T: ToString> {
+struct Block<T: ToString>
+{
+
     index: u8,
     previous_hash: String,
     timestamp: Instant,
     data: T,
     hash: String,
+
 }
 
-fn main() {
+fn main()
+{
+
     block_test();
+
 }
 
 /* Generate the hash with SHA3-256
  *
  * TODO: Hash should be generated based on adding the contents of the block together
  */
-fn generate_hash( string: &String ) -> String {
+fn generate_hash( string: &String ) -> String
+{
 
     // Break string into byte array
     let bytes : &[u8] = string.as_bytes();
@@ -40,6 +47,7 @@ fn generate_hash( string: &String ) -> String {
 
     // Return a hex string of the hash
     return format!("{:x}", out);
+
 }
 
 /* Build a block
@@ -48,7 +56,9 @@ fn generate_hash( string: &String ) -> String {
  * Index and previous hash are passed in
  *
  */
-fn build_block<T: ToString >( data: T, index: u8, previous_hash: String ) -> Block<T> {
+fn build_block<T: ToString >( data: T, index: u8, previous_hash: String ) -> Block<T>
+{
+
     let timestamp = Instant::now();
     let concatenation: String = "".to_owned(); 
     let block = Block::<T> {
@@ -61,12 +71,15 @@ fn build_block<T: ToString >( data: T, index: u8, previous_hash: String ) -> Blo
         ),
     };
     return block;
+
 }
 
 /*
 Tests
 */
-fn block_test() {
+fn block_test()
+{
+    
     let str_ : &String = &String::from("testing string");
     let str_hash : &[u8] = str_.as_bytes();
     let mut previous_hash: String = generate_hash( str_ );
@@ -75,4 +88,5 @@ fn block_test() {
         println!("Index: {x}, Previous Hash: {previous}, data: {data}, hash: {hash}", x = x, previous = block.previous_hash, data = block.data, hash=block.hash);
         previous_hash = block.hash;        
     }
+
 } 
