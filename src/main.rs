@@ -16,6 +16,10 @@ struct Block<T: ToString> {
     hash: String,
 }
 
+fn main() {
+    block_test();
+}
+
 /* Generate the hash with SHA3-256
  *
  * TODO: Hash should be generated based on adding the contents of the block together
@@ -72,7 +76,3 @@ fn block_test() {
         previous_hash = block.hash;        
     }
 } 
-
-fn main() {
-    block_test();
-}
