@@ -5,7 +5,7 @@ use std::time::{ Instant };
 use std::io;
 use std::string::String;
 
-/* Block 
+/* Block struct
  *
  */
 struct Block<T: ToString>
