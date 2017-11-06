@@ -6,4 +6,4 @@ authors = ["Ezra Goss <ezragoss@me.com>"]
 [dependencies]
 sha3 = "0.6.0"
 generic-array = "0.9.0"
-typenum = "1.9.0"
+chrono = "0.4.0"
