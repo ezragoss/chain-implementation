@@ -1,5 +1,8 @@
 use std::io;
 use std::string::String;
+use std::ops;
+use tree::LeavesIterator;
+use std::hash::{Hash, Hasher};
 
 mod block;
 
@@ -7,15 +10,30 @@ mod block;
 pub struct MerkleTree<T>
 {
 
+    // The algorithm used for hashing
+    pub algorithm: &'static Algorithm,
     // The root of the tree
     root: Tree<T>,
     // The height of the tree
     height: usize,
     // The number of leaves
-    count: usize,
-    // The composite has of the tree
-    hash: String
-        
+    count: usize
+
+}
+
+// Hash impl
+impl<T: Hash> Hash for MerkleTree<T>
+{
+    
+    pub fn hash<H: Hasher>( &self, state: &mut H )
+    {
+        <Tree<T> as Hash>::hash( &self.root, state );
+        self.height.hash( state );
+        self.count.hash( state );
+        ( self.algorithm as *const Algorithm )
+            .hash( state );
+    }
+    
 }
 
 // Merkle Tree impl
@@ -53,7 +71,13 @@ impl<T> MerkleTree<T>
     pub fn verify_hash( hash_to_compare: String ) -> bool 
     {
         return  self.hash == hash_to_compare 
-    }   
+    }
+    // Returns an iterator over the tree
+    pub fn iterator( &self ) -> LeavesIterator<T>
+    {
+        return self.root.iter()
+    }
+    pub fn 
     // Hashes the root of the tree
     pub fn hash( &mut self )
     {
