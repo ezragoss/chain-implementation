@@ -3,6 +3,7 @@ use std::string::String;
 use std::ops;
 use tree::LeavesIterator;
 use std::hash::{Hash, Hasher};
+use ring::digest::Algorithm;
 
 mod block;
 
@@ -30,8 +31,7 @@ impl<T: Hash> Hash for MerkleTree<T>
         <Tree<T> as Hash>::hash( &self.root, state );
         self.height.hash( state );
         self.count.hash( state );
-        ( self.algorithm as *const Algorithm )
-            .hash( state );
+        ( self.algorithm as *const Algorithm ).hash( state );
     }
     
 }
@@ -40,16 +40,79 @@ impl<T: Hash> Hash for MerkleTree<T>
 impl<T> MerkleTree<T>
 {
 
-    // Constructs a new Merkle Tree
-    pub fn new_tree -> self( )
+    // Constructs a new Merkle Tree using a vector to store blocks
+    pub fn new_tree( algorithm: &'static Algorithm, values: Vec<T> ) -> self
+    where
+        T: Hashable,
+    
     {
-        // Creates an empty Merkle Tree and initializes base values
+        // If the vector is empty -> construct a new Merkle Tree
+        if values.is_empty()
+        {
+            // Creates an empty Merkle Tree and initializes fields to base values
+            return MerkleTree
+            {
+                algorithm: algorithm,
+                root: Tree::empty( algorithm.hash_empty() ),
+                height: 0,
+                count: 0
+            };
+        }
+        // Number of leaves
+        let count: usize = values.len();
+        // Height of the tree
+        let mut height: usize = 0;
+        // Current vector
+        let mut current: Vec = Vec::with_capacity( count );
+        // Iterate through the values in the vector and add the leaves
+        for v in values
+        {
+            // Creates a new leaf and pushes it to the vector
+            let leaf: Tree = Tree::new_leaf( algorithm, v );
+            current.push( leaf );
+        }
+        // While current vector has a length greater than 1
+        while( current.len() > 1 )
+        {
+            // Holder next vector
+            let mut next: Vec = Vec::new();
+            // While current vector has components
+            while( !current.is_empty() )
+            {
+                // If current vector has a length of 1, push the first item in current to next
+                if( current.len() == 1 )
+                    next.push( current.remove( 0 ) );
+                else
+                {
+                    // Set left and right vectors to be the first two elements in current
+                    let left: Vec = current.remove( 0 );
+                    let right: Vec = current.remove( 0 );
+                    // Combine their hash
+                    let combined_hash = algorithm.hash_nodes( left.hash(), right.hash() );
+                    // Set up this node with the combined hash and left and right as the respective children
+                    let node = Tree::Node
+                    {
+                        hash: combined_hash.as_ref().into(),
+                        left: Box::new( left ),
+                        right: Box::new( right ),
+                    };
+                    // Push this node to next
+                    next.push( node );
+                }
+            }
+            // Increment heigh and refocus current
+            ++height;
+            current = next; 
+        }
+        // Store the root as the first element in current
+        let root: Vec = current.remove( 0 );
+        // Establish the MerkleTree with the calculated values
         MerkleTree
         {
+            algorith: algorithm,
             root: root,
-            height: 0,
-            count: 0,
-            hash: String::new()
+            height: height,
+            count: count
         }
     }
     // Returns the number of leaves in the tree
@@ -67,11 +130,6 @@ impl<T> MerkleTree<T>
     {
         return self.count == 0
     }
-    // Verifies a hash passed through with the tree's hash
-    pub fn verify_hash( hash_to_compare: String ) -> bool 
-    {
-        return  self.hash == hash_to_compare 
-    }
     // Returns an iterator over the tree
     pub fn iterator( &self ) -> LeavesIterator<T>
     {
@@ -79,11 +137,9 @@ impl<T> MerkleTree<T>
     }
     pub fn 
     // Hashes the root of the tree
-    pub fn hash( &mut self )
+    pub fn hash( &mut self ) -> &Vec<u8>
     {
-        // Generates hash
-        self.root.digest();
-        self.hash = self.root.hash;
+        self.root.digest()
     }
     
 }
