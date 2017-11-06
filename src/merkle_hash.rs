@@ -1,6 +1,8 @@
 use std::io;
 use std::string::String;
 
+mod block;
+
 // Merkle Tree struct
 pub struct MerkleTree<T>
 {
@@ -56,7 +58,7 @@ impl<T> MerkleTree<T>
     pub fn hash( &mut self )
     {
         // Generates hash
-        self.root.generate_hash();
+        self.root.digest();
         self.hash = self.root.hash;
     }
     
