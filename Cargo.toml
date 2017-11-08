@@ -8,4 +8,4 @@ sha3 = "0.6.0"
 generic-array = "0.9.0"
 chrono = "0.4.0"
 ring = "^0.12.0"
-merkle_crate = { git = "https://github.com/ezragoss/chain-implementation/blob/working/Cargo.toml" }
+merkle_crate = { git = "https://github.com/ezragoss/chain-implementation/blob/review/Cargo.toml" }
