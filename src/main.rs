@@ -1,14 +1,14 @@
 /*
  *
  * Main:
- *      - This file is mostly used for testing the modules 
+ *      - This file is used for including libraries  
  *
  */
 
 // crate block
 extern crate ring;
 
-// mod and use block;
+// mod and use blocks;
 mod merkle_tree;
 pub use merkle_tree::MerkleTree;
 
@@ -20,19 +20,3 @@ pub use tree::LeavesIterator;
 
 use std::hash::{ Hash, Hasher };
 use ring::digest::{ Algorithm, Context, SHA512 };
-
-// Main function
-fn main()
-{
-    
-    //test_all();
-    
-}
-
-// Wrapper test function
-fn test_all()
-{
-    
-    //block::block_test();
-    
-}
