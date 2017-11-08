@@ -1,9 +1,11 @@
 [package]
 name = "rust_implementation"
 version = "0.1.0"
-authors = ["Ezra Goss <ezragoss@me.com>"]
+authors = [ "Ezra Goss <ezragoss@me.com>", "Zac Plett <zplett@oberlin.edu>" ]
 
 [dependencies]
 sha3 = "0.6.0"
 generic-array = "0.9.0"
 chrono = "0.4.0"
+ring = "^0.12.0"
+merkle_crate = { git = "https://github.com/ezragoss/chain-implementation/blob/working/Cargo.toml" }

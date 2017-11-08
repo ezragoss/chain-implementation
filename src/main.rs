@@ -1,10 +1,3 @@
-/*
- *
- * Main:
- *      - This file is used for including libraries  
- *
- */
-
 // crate block
 extern crate ring;
 
@@ -20,3 +13,13 @@ pub use tree::LeavesIterator;
 
 use std::hash::{ Hash, Hasher };
 use ring::digest::{ Algorithm, Context, SHA512 };
+
+/*
+ *
+ * Main:
+ *      - This file is used for including libraries
+ *
+ */
+
+// Main method
+fn main() { }

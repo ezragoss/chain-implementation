@@ -7,3 +7,7 @@ We're building with cargo so make sure to build using
 and run using
 
 `cargo run`
+
+and test using
+
+`cargo test`

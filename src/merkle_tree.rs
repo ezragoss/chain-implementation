@@ -1,3 +1,4 @@
+// Use statements
 use tree::{ Tree, LeavesIterator };
 use std::hash::{ Hash, Hasher };
 use hash_utilities::{ Hashable, HashUtilities};
@@ -6,11 +7,10 @@ use ring::digest::Algorithm;
 /*
  *
  * Merkle Tree:
- *      - This file contains structs and impls for creating Merkle Trees and accessing pertinent
- *      information from them
- *
+ *      - This file contains structs and impls for creating Merkle Trees and accessing 
+ *        pertinent information from them
+ *       
  */
-
 
 // Merkle Tree struct
 pub struct MerkleTree<T>
