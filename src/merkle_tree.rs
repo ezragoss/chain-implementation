@@ -1,11 +1,16 @@
-use std::io;
-use std::string::String;
-use std::ops;
-use tree::LeavesIterator;
-use std::hash::{Hash, Hasher};
+use tree::{ Tree, LeavesIterator };
+use std::hash::{ Hash, Hasher };
+use hash_utilities::{ Hashable, HashUtilities};
 use ring::digest::Algorithm;
 
-mod block;
+/*
+ *
+ * Merkle Tree:
+ *      - This file contains structs and impls for creating Merkle Trees and accessing pertinent
+ *      information from them
+ *
+ */
+
 
 // Merkle Tree struct
 pub struct MerkleTree<T>
@@ -25,8 +30,10 @@ pub struct MerkleTree<T>
 // Hash impl
 impl<T: Hash> Hash for MerkleTree<T>
 {
-    
-    pub fn hash<H: Hasher>( &self, state: &mut H )
+
+    // Hash function
+    #[allow(trivial_casts)]
+    fn hash<H: Hasher>( &self, state: &mut H )
     {
         <Tree<T> as Hash>::hash( &self.root, state );
         self.height.hash( state );
@@ -41,8 +48,8 @@ impl<T> MerkleTree<T>
 {
 
     // Constructs a new Merkle Tree using a vector to store blocks
-    pub fn new_tree( algorithm: &'static Algorithm, values: Vec<T> ) -> self
-    where
+    pub fn new_tree( algorithm: &'static Algorithm, values: Vec<T> ) -> Self
+        where
         T: Hashable,
     
     {
@@ -53,7 +60,7 @@ impl<T> MerkleTree<T>
             return MerkleTree
             {
                 algorithm: algorithm,
-                root: Tree::empty( algorithm.hash_empty() ),
+                root: Tree::empty( algorithm.empty_hash() ),
                 height: 0,
                 count: 0
             };
@@ -63,32 +70,34 @@ impl<T> MerkleTree<T>
         // Height of the tree
         let mut height: usize = 0;
         // Current vector
-        let mut current: Vec = Vec::with_capacity( count );
+        let mut current  = Vec::with_capacity( count );
         // Iterate through the values in the vector and add the leaves
         for v in values
         {
             // Creates a new leaf and pushes it to the vector
-            let leaf: Tree = Tree::new_leaf( algorithm, v );
+            let leaf = Tree::new_leaf( algorithm, v );
             current.push( leaf );
         }
         // While current vector has a length greater than 1
-        while( current.len() > 1 )
+        while current.len() > 1 
         {
             // Holder next vector
-            let mut next: Vec = Vec::new();
+            let mut next = Vec::new();
             // While current vector has components
-            while( !current.is_empty() )
+            while !current.is_empty()
             {
                 // If current vector has a length of 1, push the first item in current to next
-                if( current.len() == 1 )
+                if current.len() == 1
+                {
                     next.push( current.remove( 0 ) );
+                }
                 else
                 {
                     // Set left and right vectors to be the first two elements in current
-                    let left: Vec = current.remove( 0 );
-                    let right: Vec = current.remove( 0 );
+                    let left  = current.remove( 0 );
+                    let right = current.remove( 0 );
                     // Combine their hash
-                    let combined_hash = algorithm.hash_nodes( left.hash(), right.hash() );
+                    let combined_hash = algorithm.node_hash( left.hash(), right.hash() );
                     // Set up this node with the combined hash and left and right as the respective children
                     let node = Tree::Node
                     {
@@ -101,15 +110,15 @@ impl<T> MerkleTree<T>
                 }
             }
             // Increment heigh and refocus current
-            ++height;
+            height += 1;
             current = next; 
         }
         // Store the root as the first element in current
-        let root: Vec = current.remove( 0 );
+        let root = current.remove( 0 );
         // Establish the MerkleTree with the calculated values
         MerkleTree
         {
-            algorith: algorithm,
+            algorithm: algorithm,
             root: root,
             height: height,
             count: count
@@ -135,11 +144,10 @@ impl<T> MerkleTree<T>
     {
         return self.root.iter()
     }
-    pub fn 
     // Hashes the root of the tree
     pub fn hash( &mut self ) -> &Vec<u8>
     {
-        self.root.digest()
+        self.root.hash()
     }
     
 }
