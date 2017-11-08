@@ -1,5 +1,6 @@
 // Crate inclusion
 extern crate ring;
+extern crate merkle_tree;
 
 // Use statements
 use ring::digest::{ Algorithm, Context, SHA512 };
@@ -44,7 +45,7 @@ fn simple_tree()
     let values = vec![ "zac, ezra, zaid".to_string() ];
     let tree = MerkleTree::new_tree( digest, values );
     
-    let root_hash = &digest.leaf_hash( &"hello, world".as_bytes() );
+    let root_hash = &digest.leaf_hash( &"zac, ezra, zaid".as_bytes() );
     
     assert_eq!( tree.leaf_count(),  1);
     assert_eq!( tree.height(), 0 );
